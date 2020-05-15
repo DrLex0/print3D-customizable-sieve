@@ -1,0 +1,29 @@
+{
+    "fileFormatVersion": "1",
+    "parameterSets": {
+        "Example1": {
+            "$fn": "72",
+            "gap_size": "1.2",
+            "lift_strands": "0",
+            "offset_strands": "yes",
+            "outer_diameter": "40",
+            "rim_height": "3",
+            "rim_thickness": "2",
+            "shape": "square",
+            "strand_thickness": "0.4",
+            "strand_width": "0.8"
+        },
+        "Example2": {
+            "$fn": "128",
+            "gap_size": "1",
+            "lift_strands": "0.25",
+            "offset_strands": "yes",
+            "outer_diameter": "40",
+            "rim_height": "3",
+            "rim_thickness": "1.7",
+            "shape": "round",
+            "strand_thickness": "0.4",
+            "strand_width": "0.4"
+        }
+    }
+}
