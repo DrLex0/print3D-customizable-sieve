@@ -34,6 +34,8 @@ Both prints shown in the photos use 0.4 mm strands (with offset), and were lift
 
 For filters with narrow strands, you should ensure the extrusion width matches the strand width.
 
+If you are trying to print a filter with a fine mesh that is only 1 extrusion wide, and the mesh disappears entirely when slicing, ensure that slicer options similar to “detect thin walls” are enabled.
+
 
 ## Updates
 
