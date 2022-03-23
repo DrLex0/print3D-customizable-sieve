@@ -18,7 +18,7 @@ This is an enhanced and customizable version of the [sieve by pcstru](https://ww
 
 Open the `.scad` file in [OpenSCAD](https://www.openscad.org/) and **[use the OpenSCAD Customizer](https://www.dr-lex.be/3d-printing/customizer.html)** to create a model with your own desired specifications.
 
-Compared to pcstru's original, this updated version allows to choose between round or square shapes, or you can make any regular polygon shape by reducing the number of circle segments. The polygon will fit inside a circle of the specified outer diameter (this means making a 4-sided polygon is not the same as selecting the ‘square’ shape).
+Compared to pcstru's original, this updated version allows to choose between round or square shapes, or you can make any regular polygon shape by reducing the number of circle segments. The polygon will fit inside a circle of the specified outer diameter (this means making a 4-sided polygon is not the same as selecting the ‘square’ shape). If you want a rectangular or elliptical shape, use the ‘stretch’ value to extend the shape in one direction.
 Another tweak creates the model such that the grid should be well-attached to the rim even when using few or thin strands, and my unstoppable urge for detail made me ensure that the grid is perfectly centered at all times.
 
 You can opt to print the grid as one set of layers, i.e. a plane with holes in it, or to print two sets of strands on top of each other (‘offset’ option). The latter is easier and probably faster to print, and may yield a more accurate filter if hole size is important. The disadvantage is that dirt tends to stick to the filter more easily.
@@ -39,10 +39,19 @@ If you are trying to print a filter with a fine mesh that is only 1 extrusion wi
 
 ## Updates
 
+### 2017/10/10: v2.0
+
+First published to Thingiverse.
+
 ### 2020/02/26: v2.1
 
 Added limits and steps to parameters, to make this more usable in the OpenSCAD customizer.
 Also allowed to make the outer ring shorter than the grid, or omit it entirely (use a height of 0).
+
+### 2022/03/23: v2.2
+
+Added ‘stretch’ parameter to allow creating elongated shapes (rectangles, ellipses). Refactored the code to be more straightforward.
+
 
 ## Tags
 `customizable`, `filter`, `grid`, `mesh`, `openscad`, `sieve`, `strainer`
