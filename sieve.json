@@ -24,6 +24,18 @@
             "shape": "round",
             "strand_thickness": "0.4",
             "strand_width": "0.4"
+        },
+        "MicroVac-filter": {
+            "$fn": "100",
+            "gap_size": "2.2",
+            "lift_strands": "0",
+            "offset_strands": "yes",
+            "outer_diameter": "60",
+            "rim_height": "1.2",
+            "rim_thickness": "1.47",
+            "shape": "round",
+            "strand_thickness": "0.4",
+            "strand_width": "0.4"
         }
     }
 }
