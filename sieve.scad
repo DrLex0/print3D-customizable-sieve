@@ -27,6 +27,9 @@ rim_thickness = 1.7; //[.3:.01:5]
 // Total height of the outer rim.
 rim_height = 3; //[0:.1:50]
 
+// Taper of the tube, circle only, relative to it's height
+taper=1; //[1::3]
+
 // If yes, the wires will be placed in different layers, which leads to a quicker and possibly better print, especially when using thin strands.
 offset_strands = "yes"; // [yes,no]
 
@@ -40,10 +43,10 @@ $fn = 72; //[3:1:256]
 /* [Hidden] */
 
 // A hollow tube (or only its inside volume if inside != 0)
-module tube(r_x, r_y, thick, height, inside=0) {
+module tube(r_x, r_y, thick, height, taper, inside=0) {
     if(shape == "round") {
         stretchx = r_x / r_y;
-        linear_extrude(height=height, convexity=4) {
+        linear_extrude(height=height, convexity=4, scale=taper) {
             if(inside == 0) {
                 difference() {
                     scale(1/stretchx) scale([stretchx,1]) circle(r=r_x);
@@ -103,27 +106,27 @@ module grid(width, length, strand_width, strand_thick, gap, do_offset) {
 // 	rim_height = height of outer rim
 // 	do_offset = offset the strands ("yes" or "no")
 //
-module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height, do_offset) {
+module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height, taper, do_offset) {
 	or_x = od_x/2;
     or_y = od_y/2;
 	
     // Add .01 margin to ensure good overlap, avoid non-manifold
     if(lift_strands > 0) {
-        tube(or_x, or_y, rim_thick, lift_strands+.01);
+        tube(or_x, or_y, rim_thick, lift_strands+.01, 1);
     }
     translate([0, 0, lift_strands]) {
         // Trim the grid to the outer shape, minus some margin
         intersection() {
             grid(od_y, od_x, strand_width, strand_thick, gap, do_offset);
-            translate([0,0,-1]) tube(or_x, or_y, .1, rim_height+2*strand_thick+lift_strands+2, 1);
+            translate([0,0,-1]) tube(or_x, or_y, .1, rim_height+2*strand_thick+lift_strands+2, taper, 1);
         }
         if(do_offset == "yes") {
-            translate([0, 0, 2*strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-2*strand_thick-lift_strands+.01);
+            translate([0, 0, 2*strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-2*strand_thick-lift_strands+.01, taper);
         } else {
-            translate([0, 0, strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-strand_thick-lift_strands+.01);
+            translate([0, 0, strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-strand_thick-lift_strands+.01, taper);
         }
     }
-    tube(or_x, or_y, rim_thick-.4, rim_height);
+    tube(or_x, or_y, rim_thick-.4, rim_height, taper);
 }
 
-sieve(outer_diameter+stretch, outer_diameter, strand_width, strand_thickness, gap_size, rim_thickness, rim_height, offset_strands);
+sieve(outer_diameter+stretch, outer_diameter, strand_width, strand_thickness, gap_size, rim_thickness, rim_height, taper, offset_strands);
