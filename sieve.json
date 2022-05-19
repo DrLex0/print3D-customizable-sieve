@@ -36,6 +36,20 @@
             "shape": "round",
             "strand_thickness": "0.4",
             "strand_width": "0.4"
+        },
+        "Funnel example": {
+            "$fn": "72",
+            "gap_size": "0.6",
+            "lift_strands": "0.25",
+            "offset_strands": "yes",
+            "outer_diameter": "36",
+            "rim_height": "20",
+            "rim_thickness": "1.47",
+            "shape": "round",
+            "strand_thickness": "0.4",
+            "strand_width": "0.4",
+            "stretch": "0",
+            "taper": "1.5"
         }
     }
 }

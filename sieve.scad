@@ -1,7 +1,8 @@
-/* Customizable sieve by DrLex, formerly thing:2578935
+/* Customizable sieve by DrLex and contributors, formerly thing:2578935
  * based on Sieve (or Seive?) by pcstru (thing:341357).
  * Released under Creative Commons - Attribution - Share Alike license
- * Version 2.2, 2022/03
+ * https://github.com/DrLex0/print3D-customizable-sieve
+ * Version 2.3, 2022/05
  */
 
 shape = "round"; // [round,square]
@@ -21,14 +22,14 @@ strand_thickness = .4; //[.10:.01:5]
 // Spacing between filter wires, i.e. hole size.
 gap_size = .8; //[.10:.01:10.00]
 
-// Thickness (width) of the outer rim.
+// Thickness (width) of the outer rim (will increase with height if taper > 1).
 rim_thickness = 1.7; //[.3:.01:5]
 
 // Total height of the outer rim.
 rim_height = 3; //[0:.1:50]
 
-// Taper of the tube, circle only, relative to it's height
-taper=1; //[1:0.01:3]
+// Taper of the tube: scale factor of top versus bottom contour
+taper = 1; //[1:0.01:3]
 
 // If yes, the wires will be placed in different layers, which leads to a quicker and possibly better print, especially when using thin strands.
 offset_strands = "yes"; // [yes,no]
@@ -42,7 +43,11 @@ $fn = 72; //[3:1:256]
 
 /* [Hidden] */
 
-// A hollow tube (or only its inside volume if inside != 0)
+// A tube:
+// - hollow if inside == 0,
+// - the inside volume if inside == 1,
+// - else the outside volume.
+// Taper applies to the entire shape, so wall thickness will vary if taper != 1.
 module tube(r_x, r_y, thick, height, taper, inside=0) {
     if(shape == "round") {
         stretchx = r_x / r_y;
@@ -53,21 +58,27 @@ module tube(r_x, r_y, thick, height, taper, inside=0) {
                     offset(delta=-thick) scale(1/stretchx) scale([stretchx,1]) circle(r=r_x);
                 }
             }
-            else {
+            else if(inside == 1) {
                 scale(1/stretchx) offset(delta=-thick) scale([stretchx,1]) circle(r=r_x);
+            }
+            else {
+                scale(1/stretchx) scale([stretchx,1]) circle(r=r_x);
             }
         }
     }
     else {
-        translate([0,0,height/2]) {
+        linear_extrude(height=height, convexity=4, scale=taper) {
             if(inside == 0) {
                 difference() {
-                    cube([2*r_x,2*r_y,height], center=true);
-                    translate([0,0,-1]) cube([2*(r_x-thick),2*(r_y-thick),height+4], center=true);
+                    square([2*r_x,2*r_y], center=true);
+                    square([2*(r_x-thick),2*(r_y-thick)], center=true);
                 }
             }
+            else if(inside == 1) {
+                square([2*(r_x-thick),2*(r_y-thick)], center=true);
+            }
             else {
-                cube([2*(r_x-thick),2*(r_y-thick),height], center=true);
+                square([2*r_x,2*r_y], center=true);
             }
         }
     }
@@ -107,9 +118,15 @@ module grid(width, length, strand_width, strand_thick, gap, do_offset) {
 // 	do_offset = offset the strands ("yes" or "no")
 //
 module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height, taper, do_offset) {
-	or_x = od_x/2;
+    or_x = od_x/2;
     or_y = od_y/2;
-	
+    upper_height = (do_offset == "yes") ?
+        rim_height-2*strand_thick-lift_strands+.01 :
+        rim_height-strand_thick-lift_strands+.01;
+    upper_start = (do_offset == "yes") ?
+        2*strand_thick-.01 :
+        strand_thick-.01;
+
     // Add .01 margin to ensure good overlap, avoid non-manifold
     if(lift_strands > 0) {
         tube(or_x, or_y, rim_thick, lift_strands+.01, 1);
@@ -118,15 +135,13 @@ module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height,
         // Trim the grid to the outer shape, minus some margin
         intersection() {
             grid(od_y, od_x, strand_width, strand_thick, gap, do_offset);
-            translate([0,0,-1]) tube(or_x, or_y, .1, rim_height+2*strand_thick+lift_strands+2, taper, 1);
+            translate([0,0,-.01]) tube(or_x, or_y, .1, rim_height + 2*strand_thick + .1, 1, 1);
         }
-        if(do_offset == "yes") {
-            translate([0, 0, 2*strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-2*strand_thick-lift_strands+.01, taper);
-        } else {
-            translate([0, 0, strand_thick-.01]) tube(or_x, or_y, rim_thick, rim_height-strand_thick-lift_strands+.01, taper);
-        }
+        
+        translate([0, 0, upper_start]) tube(or_x, or_y, rim_thick, upper_height, taper);
     }
-    tube(or_x, or_y, rim_thick-.4, rim_height, taper);
+
+    tube(or_x, or_y, rim_thick-.4, rim_height - upper_height, 1);
 }
 
 sieve(outer_diameter+stretch, outer_diameter, strand_width, strand_thickness, gap_size, rim_thickness, rim_height, taper, offset_strands);
