@@ -28,7 +28,7 @@ rim_thickness = 1.7; //[.3:.01:5]
 rim_height = 3; //[0:.1:50]
 
 // Taper of the tube, circle only, relative to it's height
-taper=1; //[1::3]
+taper=1; //[1:0.01:3]
 
 // If yes, the wires will be placed in different layers, which leads to a quicker and possibly better print, especially when using thin strands.
 offset_strands = "yes"; // [yes,no]
