@@ -22,6 +22,9 @@ strand_thickness = .4; //[.10:.01:5]
 // Spacing between filter wires, i.e. hole size.
 gap_size = .8; //[.10:.01:10.00]
 
+// Rotation (in degrees) of filter wires in relation to shape.
+grid_rotation = 0; // [0:1:90]
+
 // Thickness (width) of the outer rim (will increase with height if taper > 1).
 rim_thickness = 1.7; //[.3:.01:5]
 
@@ -134,7 +137,7 @@ module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height,
     translate([0, 0, lift_strands]) {
         // Trim the grid to the outer shape, minus some margin
         intersection() {
-            grid(od_y, od_x, strand_width, strand_thick, gap, do_offset);
+            rotate([0, 0, grid_rotation]) grid(od_y * 2, od_x * 2, strand_width, strand_thick, gap, do_offset);
             translate([0,0,-.01]) tube(or_x, or_y, .1, rim_height + 2*strand_thick + .1, 1, 1);
         }
         
