@@ -5,9 +5,9 @@
  * Version 2.3, 2022/05
  */
 
-shape = "round"; // [round,square]
+shape = "round"; // [round,square,heart]
 
-// All dimensions are in millimeters. For square shape, this is the length of one side.
+// All dimensions are in millimeters. For square shape, this is the length of one side. For heart shape, this is the width and depth of the heart.
 outer_diameter = 40; //[5.0:.1:250.0]
 
 // Additional X dimension length for creating elongated shapes (rectangles or ellipses).
@@ -43,6 +43,36 @@ $fn = 72; //[3:1:256]
 
 /* [Hidden] */
 
+module flat_heart(r_x, r_y, thick, inside) {
+    // radius + 2 * square
+    s_x = (r_x * 2) / 1.5;
+    b = s_x / 2;
+    w = thick;
+
+    if (inside == 1) {
+    translate([-r_x, -r_x ,0])
+    union() {
+            square(s_x);
+            translate([b, s_x, 0]) circle(d=s_x);
+            translate([s_x, b, 0]) circle(d=s_x);
+        }
+    } else {
+        translate([-r_x, -r_x ,0])
+        difference() {
+            union() {
+                square(s_x);
+                translate([b, s_x, 0]) circle(d=s_x);
+                translate([s_x, b, 0]) circle(d=s_x);
+
+            }
+            translate([w/2, w/2]) square([s_x-(w/2), s_x-w]);
+            translate([w/2, w/2]) square([s_x-w, s_x-(w/2)]);
+            translate([b, s_x, 0]) circle(d=s_x-w);
+            translate([s_x, b, 0]) circle(d=s_x-w);
+       }
+    }
+}
+
 // A tube:
 // - hollow if inside == 0,
 // - the inside volume if inside == 1,
@@ -65,6 +95,10 @@ module tube(r_x, r_y, thick, height, taper, inside=0) {
                 scale(1/stretchx) scale([stretchx,1]) circle(r=r_x);
             }
         }
+    }
+    else if(shape == "heart") {
+        linear_extrude(height = height)
+            flat_heart(r_x, r_y, thick, inside);
     }
     else {
         linear_extrude(height=height, convexity=4, scale=taper) {
