@@ -19,16 +19,18 @@ This is an enhanced and customizable version of the [sieve by pcstru](https://ww
 Open the `.scad` file in [OpenSCAD](https://www.openscad.org/) and **[use the OpenSCAD Customizer](https://www.dr-lex.be/3d-printing/customizer.html)** to create a model with your own desired specifications.
 
 Compared to pcstru's original, this updated version has these extra features:
-* choose between round or square shapes;
+* choose between round, square, or heart shapes;
 * option to make any regular polygon shape by reducing the number of circle segments. The polygon will fit inside a circle of the specified outer diameter (this means making a 4-sided polygon is not the same as selecting the ‘square’ shape);
-* ability to make a rectangular or elliptical shape with the `stretch` value to extend the shape in one direction;
-* optionally add a taper to create funnel-like filters;
+* ability to make a rectangular or elliptical shape with the `stretch` value to extend the shape in one direction (not applicable to heart shape);
+* optionally add a taper to create funnel-like filters (not applicable to heart shape);
 * there is a bit of extra overlap between the walls and grid, such that the grid should be well-attached to the rim even when using few or thin strands;
 * the grid is perfectly centered at all times, courtesy of my unstoppable urge for detail.
 
 You can opt to print the grid as one set of layers, i.e. a plane with holes in it, or to print two sets of strands on top of each other (‘offset’ option). The latter is easier and probably faster to print, and may yield a more accurate filter if hole size is important. The disadvantage is that dirt tends to stick to the filter more easily.
 
 You can also opt to lift the grid. This allows to print accurate filters with strands merely as wide as your nozzle diameter (see photos). Set the lift distance to your *first layer height* to ensure the filter only starts being printed at the *second* layer. This avoids that the strands get squished against the bed, or printed with a wider first layer extrusion, both of which would make the hole size inaccurate. You could also use a raft to the same effect, but it might be difficult to remove the filter form the raft without damaging it.
+
+The segments parameter also affects the heart shape, but you should use a multiple of 4 in this case to ensure a smooth and usable shape.
 
 
 ### Print settings
@@ -62,6 +64,10 @@ Added ‘stretch’ parameter to allow creating elongated shapes (rectangles, el
 ### 2022/05/19: v2.3
 
 Added ‘taper’ parameter (thanks to beettlle) to generate funnel-like shapes.
+
+### 2023/05/21: v2.4
+
+Added grid rotation and heart shape (thanks to rixvet).
 
 
 ## Tags

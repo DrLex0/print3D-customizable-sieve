@@ -2,7 +2,7 @@
  * based on Sieve (or Seive?) by pcstru (thing:341357).
  * Released under Creative Commons - Attribution - Share Alike license
  * https://github.com/DrLex0/print3D-customizable-sieve
- * Version 2.3, 2022/05
+ * Version 2.4, 2023/05
  */
 
 shape = "round"; // [round,square,heart]
@@ -10,7 +10,7 @@ shape = "round"; // [round,square,heart]
 // All dimensions are in millimeters. For square shape, this is the length of one side. For heart shape, this is the width and depth of the heart.
 outer_diameter = 40; //[5.0:.1:250.0]
 
-// Additional X dimension length for creating elongated shapes (rectangles or ellipses).
+// Additional X dimension length for creating elongated shapes (rectangles or ellipses). Not applicable to heart shape.
 stretch = 0.0; //[0:.1:250.0]
 
 // Width of the filter wires. You shouldn't try to go below your nozzle diameter, although it might work within certain limits.
@@ -31,7 +31,7 @@ rim_thickness = 1.7; //[.3:.01:5]
 // Total height of the outer rim.
 rim_height = 3; //[0:.1:50]
 
-// Taper of the tube: scale factor of top versus bottom contour
+// Taper of the tube: scale factor of top versus bottom contour. Not applicable to heart shape.
 taper = 1; //[1:0.01:3]
 
 // If yes, the wires will be placed in different layers, which leads to a quicker and possibly better print, especially when using thin strands.
@@ -50,7 +50,7 @@ module flat_heart(r_x, r_y, thick, inside) {
     // radius + 2 * square
     s_x = (r_x * 2) / 1.5;
     b = s_x / 2;
-    w = thick;
+    w = thick * 2;
 
     if (inside == 1) {
     translate([-r_x, -r_x ,0])
