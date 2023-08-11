@@ -24,7 +24,7 @@ Compared to pcstru's original, this updated version has these extra features:
 * ability to make a rectangular or elliptical shape with the `stretch` value to extend the shape in one direction (not applicable to heart shape);
 * optionally add a taper to create funnel-like filters (not applicable to heart shape);
 * there is a bit of extra overlap between the walls and grid, such that the grid should be well-attached to the rim even when using few or thin strands;
-* the grid is perfectly centered at all times, courtesy of my unstoppable urge for detail.
+* the grid is perfectly centered at all times, courtesy of my unstoppable urge for detail. (But, the origin can be adjusted if desired.)
 
 You can opt to print the grid as one set of layers, i.e. a plane with holes in it, or to print two sets of strands on top of each other (‘offset’ option). The latter is easier and probably faster to print, and may yield a more accurate filter if hole size is important. The disadvantage is that dirt tends to stick to the filter more easily.
 
@@ -68,6 +68,10 @@ Added ‘taper’ parameter (thanks to beettlle) to generate funnel-like shapes.
 ### 2023/05/21: v2.4
 
 Added grid rotation and heart shape (thanks to rixvet).
+
+### 2023/08/11: v2.5
+
+Allow shifting the position of the grid; reduce rendering time of final mesh by generating less structures that will be trimmed anyhow.
 
 
 ## Tags

@@ -2,7 +2,7 @@
  * based on Sieve (or Seive?) by pcstru (thing:341357).
  * Released under Creative Commons - Attribution - Share Alike license
  * https://github.com/DrLex0/print3D-customizable-sieve
- * Version 2.4, 2023/05
+ * Version 2.5, 2023/08
  */
 
 shape = "round"; // [round,square,heart]
@@ -40,11 +40,18 @@ offset_strands = "yes"; // [yes,no]
 // For most accurate results with thin strands, set this to your first layer height. This will ensure the strands only start printing from the second layer, avoiding any problems due to the first layer being squished, or using a wider extrusion, etc.
 lift_strands = 0; //[0.00:.01:2.00]
 
-// Number of segments for round shape, low values can be used to obtain polygons that fit inside a circle of the specified outer diameter. For instance, 3 yields a triangle.
+// Shift origin of the grid, percentage of grid pattern size (100% shift is same as 0% shift)
+shift_x = 0; //[0:1:99]
+shift_y = 0; //[0:1:99]
+
+// Number of segments for round shape, low values can be used to obtain polygons that fit inside a circle of the specified outer diameter. For instance, 3 yields a triangle. Also affects heart shape.
 $fn = 72; //[3:1:256]
 
 
 /* [Hidden] */
+shift_x_abs = (gap_size + strand_width) * shift_x / 100;
+shift_y_abs = (gap_size + strand_width) * shift_y / 100;
+
 
 module flat_heart(r_x, r_y, thick, inside) {
     // radius + 2 * square
@@ -122,23 +129,23 @@ module tube(r_x, r_y, thick, height, taper, inside=0) {
 }
 
 // Grid
-module grid(width, length, strand_width, strand_thick, gap, do_offset) {
+module grid(width, length, strand_width, strand_thick, gap, do_offset, sh_x, sh_y) {
     wh = width / 2;
     lh = length / 2;
     // Let's enforce symmetry just for the heck of it
     wh_align = (strand_width + gap) * floor(wh/(strand_width + gap)) + strand_width + gap/2;
     lh_align = (strand_width + gap) * floor(lh/(strand_width + gap)) + strand_width + gap/2;
 
-    for(ix = [-wh_align:strand_width+gap:wh_align]) {
-        translate([-lh,ix,0]) cube([length,strand_width,strand_thick]) ;
+    for(iy = [-wh_align:strand_width+gap:wh_align]) {
+        translate([-lh,iy+sh_y,0]) cube([length,strand_width,strand_thick]) ;
     }
 
-    for(iy = [-lh_align:strand_width+gap:lh_align]) {
+    for(ix = [-lh_align:strand_width+gap:lh_align]) {
         if (do_offset=="yes") {
-            translate([iy,-wh,strand_thick]) cube([strand_width,width,strand_thick]) ;
+            translate([ix+sh_x,-wh,strand_thick]) cube([strand_width,width,strand_thick]) ;
         }
         else {
-            translate([iy,-wh,0]) cube([strand_width,width,strand_thick]) ;
+            translate([ix+sh_x,-wh,0]) cube([strand_width,width,strand_thick]) ;
         }
     }
 }
@@ -153,8 +160,10 @@ module grid(width, length, strand_width, strand_thick, gap, do_offset) {
 // 	rim_thick = thickness of outer rim
 // 	rim_height = height of outer rim
 // 	do_offset = offset the strands ("yes" or "no")
+// 	sh_x and sh_y = shift the grid over these distances
 //
-module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height, taper, do_offset) {
+//
+module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height, taper, do_offset, sh_x, sh_y) {
     or_x = od_x/2;
     or_y = od_y/2;
     upper_height = (do_offset == "yes") ?
@@ -169,9 +178,10 @@ module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height,
         tube(or_x, or_y, rim_thick, lift_strands+.01, 1);
     }
     translate([0, 0, lift_strands]) {
-        // Trim the grid to the outer shape, minus some margin
+        // Generate larger grid and then trim it to the outer shape, minus some margin.
+        // However, don't make it way larger because this will needlessly increase computing time.
         intersection() {
-            rotate([0, 0, grid_rotation]) grid(od_y * 2, od_x * 2, strand_width, strand_thick, gap, do_offset);
+            rotate([0, 0, grid_rotation]) grid(od_y * 1.2, od_x * 1.2, strand_width, strand_thick, gap, do_offset, sh_x, sh_y);
             translate([0,0,-.01]) tube(or_x, or_y, .1, rim_height + 2*strand_thick + .1, 1, 1);
         }
         
@@ -181,4 +191,11 @@ module sieve(od_x, od_y, strand_width, strand_thick, gap, rim_thick, rim_height,
     tube(or_x, or_y, rim_thick-.4, rim_height - upper_height, 1);
 }
 
-sieve(outer_diameter+stretch, outer_diameter, strand_width, strand_thickness, gap_size, rim_thickness, rim_height, taper, offset_strands);
+sieve(outer_diameter+stretch,
+      outer_diameter,
+      strand_width, strand_thickness,
+      gap_size,
+      rim_thickness, rim_height,
+      taper,
+      offset_strands,
+      shift_x_abs, shift_y_abs);
